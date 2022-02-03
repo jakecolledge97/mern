@@ -1,10 +1,24 @@
 const express = require('express');
+
+// Import the ApolloServer class
+const { ApolloServer } = require('apollo-server-express');
+
 const path = require('path');
 const db = require('./config/connection');
 const routes = require('./routes');
 
-const app = express();
+// Create a new instance of an Apollo server with the GraphQL schema
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+});
+
+// Update Express.js to use Apollo server features
+server.applyMiddleware({ app });
+
 const PORT = process.env.PORT || 3001;
+const app = express();
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
