@@ -1,9 +1,9 @@
 const express = require('express');
 const path = require('path');
-const db = require('./config/connection');
+
 // Import the ApolloServer class
 const { ApolloServer } = require('apollo-server-express');
-
+const db = require('./config/connection');
 const { typeDefs, resolvers } = require('./schemas');
 const { authMiddleware } = require('./utils/auth');
 
@@ -15,11 +15,9 @@ const server = new ApolloServer({
 });
 
 // Update Express.js to use Apollo server features
-server.applyMiddleware({ app });
-
 const PORT = process.env.PORT || 3001;
 const app = express();
-
+server.applyMiddleware({ app });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
