@@ -4,9 +4,12 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        me: async (parent, {email}) => {
-            return await User.findOne({email});
-        }
+        me: async (parent, { email }, context) => {
+            if (context.user) {
+                return User.findOne({_id: context.user.id}).select("User")
+            }
+            throw new AuthenticationError('You need to be logged in!');
+        },
     },
 
     Mutation: {
@@ -32,9 +35,26 @@ const resolvers = {
 
             return { token, user };
         },
-        // saveBook: async (parent, {input}) => {
-        //     const user = await User.findOne({ email });
-        // }
+        saveBook: async (parent, {input}, context) => {
+            if(context.user){
+                const updatedUser = await User.findOneAndUpdate(
+                    {id: context.user._id},
+                    { $addToSet: {savedBBooks: body}},
+                    {new: true, runValidators: true }
+                )
+                return updatedUser
+            }
+        },
+        deleteBook: async(parent, {bookId},context) => {
+            if(context.user){
+                const updatedUser = await User.findOneAndUpdate(
+                    {_id: context.user._id},
+                    { $pull: { savedBooks: {bookId: bookId}}},
+                    {new: true}
+                );
+                return updatedUser
+            }
+        }
 
     }
 };
