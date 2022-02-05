@@ -4,8 +4,8 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        me: async () => {
-            return await User.find();
+        me: async (parent, args) => {
+            return await User.findOne({email});
         }
     },
 
@@ -14,7 +14,28 @@ const resolvers = {
             const user = await User.create({ username, email, password });
             const token = signToken(user);
             return { token, user };
-        }
+        },
+        login: async (parent, { email, password }) => {
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                throw new AuthenticationError('No user found with this email address');
+            }
+
+            const correctPw = await user.isCorrectPassword(password);
+
+            if (!correctPw) {
+                throw new AuthenticationError('Incorrect credentials');
+            }
+
+            const token = signToken(user);
+
+            return { token, user };
+        },
+        // saveBook: async (parent, {input}) => {
+        //     const user = await User.findOne({ email });
+        // }
+
     }
 };
 
