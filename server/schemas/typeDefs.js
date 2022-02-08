@@ -13,7 +13,7 @@ const typeDefs = gql`
     type Book {
         authors: [String]
         description: String 
-        bookId: Int
+        bookId: String
         image: String
         link: String
         title: String 
@@ -34,7 +34,7 @@ const typeDefs = gql`
     }
 
     type Query {
-        me(email: String!): User
+        me: User
     }
 
     type Mutation {
