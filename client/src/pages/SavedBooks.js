@@ -13,7 +13,7 @@ const SavedBooks = () => {
   
   const {loading, data} = useQuery(QUERY_ME);
   const userData = data?.me || [];
-  const removeBook = useMutation(DELETE_BOOK)
+  const [removeBook] = useMutation(DELETE_BOOK)
   // use this to determine if `useEffect()` hook needs to run again
   // const userDataLength = Object.keys(userData).length;
   // console.log(data?.me)
@@ -58,6 +58,7 @@ const SavedBooks = () => {
       });
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
+      window.location.reload()
     } catch (err) {
       console.error(err);
     }
